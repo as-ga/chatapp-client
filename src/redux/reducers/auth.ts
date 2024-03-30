@@ -1,8 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { adminLogin, adminLogout, getAdmin } from "../thunks/admin";
 import toast from "react-hot-toast";
 
-const initialState = {
+interface AuthState {
+  user: any; // Define the type of your user object
+  isAdmin: boolean;
+  loader: boolean;
+}
+
+const initialState: AuthState = {
   user: null,
   isAdmin: false,
   loader: true,
@@ -12,7 +18,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    userExists: (state, action) => {
+    userExists: (state, action: PayloadAction<any>) => {
       state.user = action.payload;
       state.loader = false;
     },
@@ -21,7 +27,6 @@ const authSlice = createSlice({
       state.loader = false;
     },
   },
-
   extraReducers: (builder) => {
     builder
       .addCase(adminLogin.fulfilled, (state, action) => {

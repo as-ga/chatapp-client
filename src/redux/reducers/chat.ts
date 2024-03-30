@@ -1,8 +1,18 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getOrSaveFromStorage } from "../../lib/features";
 import { NEW_MESSAGE_ALERT } from "../../constants/events";
 
-const initialState = {
+interface NewMessageAlert {
+  chatId: string;
+  count: number;
+}
+
+interface ChatState {
+  notificationCount: number;
+  newMessagesAlert: NewMessageAlert[];
+}
+
+const initialState: ChatState = {
   notificationCount: 0,
   newMessagesAlert: getOrSaveFromStorage({
     key: NEW_MESSAGE_ALERT,
@@ -25,14 +35,11 @@ const chatSlice = createSlice({
     resetNotificationCount: (state) => {
       state.notificationCount = 0;
     },
-
-    setNewMessagesAlert: (state, action) => {
+    setNewMessagesAlert: (state, action: PayloadAction<{ chatId: string }>) => {
       const chatId = action.payload.chatId;
-
       const index = state.newMessagesAlert.findIndex(
-        (item:any) => item.chatId === chatId
+        (item) => item.chatId === chatId
       );
-
       if (index !== -1) {
         state.newMessagesAlert[index].count += 1;
       } else {
@@ -42,10 +49,9 @@ const chatSlice = createSlice({
         });
       }
     },
-
-    removeNewMessagesAlert: (state, action) => {
+    removeNewMessagesAlert: (state, action: PayloadAction<string>) => {
       state.newMessagesAlert = state.newMessagesAlert.filter(
-        (item:any) => item.chatId !== action.payload
+        (item) => item.chatId !== action.payload
       );
     },
   },
